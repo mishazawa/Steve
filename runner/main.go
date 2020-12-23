@@ -1,10 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 var (
@@ -33,8 +34,21 @@ func main() {
 		}
 
 		fmt.Println("Running server")
+
+		current, _ := filepath.Abs(".")
+
+		if err := os.Chdir(local); err != nil {
+			fmt.Println("Can't change directory", current, err.Error())
+			return
+		}
+
 		if err := executeServer([]string{"java", "-jar", "server.jar"}); err != nil {
 			fmt.Println("Can't run server", err.Error())
+			return
+		}
+
+		if err := os.Chdir(current); err != nil {
+			fmt.Println("Can't change directory", current, err.Error())
 			return
 		}
 	}
@@ -54,16 +68,10 @@ func executeServer(executable []string) error {
 	}
 
 	cmd := exec.Command(executable[0], executable[1:]...)
-	stderr, _ := cmd.StderrPipe()
 
-	if err := cmd.Start(); err != nil {
+	if err := cmd.Run(); err != nil {
+		fmt.Println("1", err.Error())
 		return err
-	}
-
-	scanner := bufio.NewScanner(stderr)
-
-	for scanner.Scan() {
-		return fmt.Errorf(scanner.Text())
 	}
 
 	return nil

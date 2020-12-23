@@ -16,7 +16,7 @@ run-runner-upload:
 	go run ./runner/ -remote http://$(HOST):$(PORT) -local ./data -upload
 
 run-waiter:
-	go run ./waiter/ -port $(PORT) -datafolder ./temp
+	go run -race ./waiter/ -port $(PORT) -datafolder ./temp
 
 build-bot:
 	go build -o bin/$(BASE)-bot ./bot/

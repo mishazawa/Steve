@@ -70,7 +70,6 @@ func executeServer(executable []string) error {
 	cmd := exec.Command(executable[0], executable[1:]...)
 
 	if err := cmd.Run(); err != nil {
-		fmt.Println("1", err.Error())
 		return err
 	}
 
